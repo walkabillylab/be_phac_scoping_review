@@ -1,0 +1,39 @@
+---
+title: "green_blue_analysis"
+author: "Daniel Fuller"
+date: "12/05/2022"
+output:
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(kableExtra)
+library(knitr)
+```
+
+## Analysis of Walkability/Bikeability Data
+
+```{r}
+walk_bike <- read_csv("Data Extraction PHAC Built Environment_2022_05_16.csv")
+
+walk_bike$measure <- str_trim(walk_bike$measure)
+
+walk_bike$'type of measure' <- str_trim(walk_bike$'type of measure')
+
+table(walk_bike$metric)
+
+walk_bike <- filter(walk_bike, metric != "Green Space")
+```
+
+## List and count of types of measures
+
+```{r}
+table(walk_bike$'type of measure')
+
+table(walk_bike$measure)
+```
+
+

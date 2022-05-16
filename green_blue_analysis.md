@@ -13,17 +13,22 @@ output:
 
 
 ```r
-green_blue <- read_csv("Data Extraction PHAC Built Environment_2022_05_12.csv")
+green_blue <- read_csv("Data Extraction PHAC Built Environment_2022_05_16.csv")
 ```
 
 ```
-## Rows: 55 Columns: 26
+## New names:
+## * `` -> ...27
+```
+
+```
+## Rows: 62 Columns: 27
 ```
 
 ```
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (23): first_author_last_name, city, country, study_design, intervention,...
+## chr (24): first_author_last_name, city, country, study_design, intervention,...
 ## dbl  (3): year, comparison_sample, comparison_sample1
 ```
 
@@ -43,16 +48,26 @@ table(green_blue$metric)
 
 ```
 ## 
-##                           bikeability           bikeability (active living) 
-##                                     1                                     1 
-##   bikeability (active transportation)                           Green Space 
-##                                     1                                    22 
-##                           walkability                           Walkability 
-##                                    18                                     4 
-##           walkability and bikeability walkability/bikeability/active living 
-##                                     4                                     1 
-##              walkbility & bikeability 
-##                                     1
+##                                     bikeability 
+##                                               3 
+##                                     Green Space 
+##                                              20 
+##      Green Space (also appeared in Walkability) 
+##                                               1 
+##                       Green Space & Walkability 
+##                                               1 
+##                                     walkability 
+##                                              18 
+##                                     Walkability 
+##                                              11 
+## Walkability (and built enironment more broadly) 
+##                                               1 
+##                     walkability and bikeability 
+##                                               5 
+##           Walkability; Green Space (park audit) 
+##                                               1 
+##                        walkbility & bikeability 
+##                                               1
 ```
 
 ```r
@@ -69,7 +84,7 @@ table(green_blue$'type of measure')
 ```
 ## 
 ##              audit parent self-report        self-report 
-##                 16                  1                  4
+##                 14                  1                  4
 ```
 
 ```r
@@ -103,10 +118,6 @@ table(green_blue$measure)
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                Respondents’ assessment of whether there are good parks or playgrounds in the neighborhood and whether respondents feel comfortable going to the park or playground closest to where she lives during the day. Both indicators are coded on a 4-point scale with higher levels indicating higher agreement. 
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          1 
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   SOPARC (or modified versions, such as SOPLAY or SOPARNA) 
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          1 
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Survey part of the Stanford Neighborhood Discovery Tool: 25-item demographic/environmental observation survey ((e.g., cracks in sidewalks, sidewalk corner ramps, traffic calming facilities  gangs, homeless, garbage, graffiti).\nNote that the Stanford Neighborhood Discovery Tool is technically a tablet or smartphone based participatory tool that incorporates photo and voice technology, GPS but also a more standard survey (described above) 
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          1 
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          System for Observing Parks and Recreation in Communities (SOPARC) 
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          1 
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           System for Observing Play and Recreation in Communities (SOPARC) 
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          6
