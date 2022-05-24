@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(kableExtra)
 library(knitr)
+library(janitor)
 ```
 
 ## Analysis of Green Blue Data
@@ -19,9 +20,10 @@ library(knitr)
 ```{r}
 green_blue <- read_csv("Data Extraction PHAC Built Environment_2022_05_16.csv")
 
+green_blue <- clean_names(green_blue)
 green_blue$measure <- str_trim(green_blue$measure)
 
-green_blue$'type of measure' <- str_trim(green_blue$'type of measure')
+green_blue$type_of_measure <- str_trim(green_blue$type_of_measure)
 
 table(green_blue$metric)
 
@@ -31,12 +33,15 @@ green_blue <- filter(green_blue, metric == "Green Space")
 ## List and count of types of measures
 
 ```{r}
-table(green_blue$'type of measure')
+table(green_blue$type_of_measure)
+
+bg_audit <- filter(green_blue, type_of_measure == "audit")
+bg_sr <- filter(green_blue, type_of_measure != "audit")
 
 table(green_blue$measure)
 ```
 
-Overal there were 16 measures using audit based tools, 1 measure using parent self-report and 4 measures using self-report. 
+Overall there were 16 measures using audit based tools, 1 measure using parent self-report and 4 measures using self-report. 
 
 The data for the measures is a bit messier. There were a number of instances of studies using SOPARC or self-report in combination with other audit based measures, which is why the numbers don't sum to 16.  
 
@@ -68,3 +73,66 @@ The majority of self-report tools were based on similar questions about park acc
 5. There are good parks, playgrounds and play spaces in this neighborhood. Response options: strongly agreed, agreed, disagreed, or strongly disagreed. 
 6. Respondents’ assessment of whether there are good parks or playgrounds in the neighborhood and whether respondents feel comfortable going to the park or playground closest to where she lives during the day. 
     * Both indicators are coded on a 4-point scale with higher levels indicating higher agreement. 
+    
+## List and count of priority populations
+
+```{r}
+table(green_blue$equity_group1)
+
+table(green_blue$equity_group2)
+```
+
+# Audit Tools
+
+## List and count of priority populations for audits
+
+```{r}
+bg_audit <- bg_audit %>% 
+            	mutate(equity = case_when(
+            		equity_group1 == "% Latino in three categories" ~ "Racialized",
+            		equity_group1 == "Area level income" ~ "Low SES",
+            		equity_group1 == "European Deprivation Index (EDI)" ~ "Low SES",
+            		equity_group1 == "Focus in low income high % Latino areas" ~ "Racialized",
+            		equity_group1 == "Food Desert Parks" ~ "Low SES",
+            		equity_group1 == "Gender of Park Users" ~ "Women",
+            		equity_group1 == "Low income park" ~ "Low SES",
+            		equity_group1 == "Sample is in low income parks only" ~ "Low SES"
+            	))
+
+bg_audit <- bg_audit %>% 
+            	mutate(equity2 = case_when(
+            		equity_group2 == "Area level % foreign born" ~ "Racialized",
+            		equity_group2 == "Gender" ~ "Low SES",
+            		equity_group2 == "Hispanic" ~ "Racialized"
+            	))
+          
+
+table(bg_audit$equity, bg_audit$measure)
+
+table(bg_audit$equity2, bg_audit$measure)
+```
+
+## List and count of study designs for audits
+
+
+```{r}
+table(bg_audit$study_design, bg_audit$measure)
+```
+
+# Self-Report Tools
+
+## List and count of priority populations for self-report
+
+```{r}
+table(bg_sr$equity_group1, bg_sr$measure)
+
+table(bg_sr$equity_group2, bg_sr$measure)
+```
+
+## List and count of study designs for self-report
+
+
+```{r}
+table(bg_sr$study_design, bg_sr$measure)
+```
+

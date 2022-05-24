@@ -39,9 +39,10 @@ green_blue <- read_csv("Data Extraction PHAC Built Environment_2022_05_16.csv")
 ```
 
 ```r
+green_blue <- clean_names(green_blue)
 green_blue$measure <- str_trim(green_blue$measure)
 
-green_blue$'type of measure' <- str_trim(green_blue$'type of measure')
+green_blue$type_of_measure <- str_trim(green_blue$type_of_measure)
 
 table(green_blue$metric)
 ```
@@ -78,7 +79,7 @@ green_blue <- filter(green_blue, metric == "Green Space")
 
 
 ```r
-table(green_blue$'type of measure')
+table(green_blue$type_of_measure)
 ```
 
 ```
@@ -88,6 +89,9 @@ table(green_blue$'type of measure')
 ```
 
 ```r
+bg_audit <- filter(green_blue, type_of_measure == "audit")
+bg_sr <- filter(green_blue, type_of_measure != "audit")
+
 table(green_blue$measure)
 ```
 
@@ -123,7 +127,7 @@ table(green_blue$measure)
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          6
 ```
 
-Overal there were 16 measures using audit based tools, 1 measure using parent self-report and 4 measures using self-report. 
+Overall there were 16 measures using audit based tools, 1 measure using parent self-report and 4 measures using self-report. 
 
 The data for the measures is a bit messier. There were a number of instances of studies using SOPARC or self-report in combination with other audit based measures, which is why the numbers don't sum to 16.  
 
@@ -155,3 +159,277 @@ The majority of self-report tools were based on similar questions about park acc
 5. There are good parks, playgrounds and play spaces in this neighborhood. Response options: strongly agreed, agreed, disagreed, or strongly disagreed. 
 6. Respondents’ assessment of whether there are good parks or playgrounds in the neighborhood and whether respondents feel comfortable going to the park or playground closest to where she lives during the day. 
     * Both indicators are coded on a 4-point scale with higher levels indicating higher agreement. 
+    
+## List and count of priority populations
+
+
+```r
+table(green_blue$equity_group1)
+```
+
+```
+## 
+##            % Latino in three categories                       Area level income 
+##                                       1                                       1 
+##        European Deprivation Index (EDI) Focus in low income high % Latino areas 
+##                                       1                                       1 
+##                       Food Desert Parks                    Gender of Park Users 
+##                                       1                                       1 
+##                         Low income park                      Non-Hispanic Black 
+##                                       1                                       1 
+##      Sample is in low income parks only 
+##                                       2
+```
+
+```r
+table(green_blue$equity_group2)
+```
+
+```
+## 
+## Area level % foreign born                    Gender                  Hispanic 
+##                         1                         2                         1
+```
+
+# Audit Tools
+
+## List and count of priority populations for audits
+
+
+```r
+bg_audit <- bg_audit %>% 
+            	mutate(equity = case_when(
+            		equity_group1 == "% Latino in three categories" ~ "Racialized",
+            		equity_group1 == "Area level income" ~ "Low SES",
+            		equity_group1 == "European Deprivation Index (EDI)" ~ "Low SES",
+            		equity_group1 == "Focus in low income high % Latino areas" ~ "Racialized",
+            		equity_group1 == "Food Desert Parks" ~ "Low SES",
+            		equity_group1 == "Gender of Park Users" ~ "Women",
+            		equity_group1 == "Low income park" ~ "Low SES",
+            		equity_group1 == "Sample is in low income parks only" ~ "Low SES"
+            	))
+
+bg_audit <- bg_audit %>% 
+            	mutate(equity2 = case_when(
+            		equity_group2 == "Area level % foreign born" ~ "Racialized",
+            		equity_group2 == "Gender" ~ "Low SES",
+            		equity_group2 == "Hispanic" ~ "Racialized"
+            	))
+          
+
+table(bg_audit$equity, bg_audit$measure)
+```
+
+```
+##             
+##              Community Park Audit Tool (CPAT)
+##   Low SES                                   1
+##   Racialized                                0
+##   Women                                     0
+##             
+##              Observational Park Audit Tool (OPAT)
+##   Low SES                                       1
+##   Racialized                                    0
+##   Women                                         0
+##             
+##              PARK (Parks, Activity, and Recreation among Kids)
+##   Low SES                                                    0
+##   Racialized                                                 0
+##   Women                                                      0
+##             
+##              Parks and Play Spaces Direct Observation (PPSDO) tool and SOPARC
+##   Low SES                                                                   0
+##   Racialized                                                                0
+##   Women                                                                     0
+##             
+##              Public Open Space Audit Tool (POST)
+##   Low SES                                      0
+##   Racialized                                   1
+##   Women                                        0
+##             
+##              Public Open Space Tool. 32 out of the 49 items from POST. We excluded items that were absent \n(e.g., barbecue area, dog fountains) and/or present (e.g., presence \ntrees, access to public transport) in all green spaces, as they did not \ndiscriminate green spaces, and items with an unpredictable impact in \ngreen space use (e.g., arrangement of paths and trees).
+##   Low SES                                                                                                                                                                                                                                                                                                                                                                                1
+##   Racialized                                                                                                                                                                                                                                                                                                                                                                             0
+##   Women                                                                                                                                                                                                                                                                                                                                                                                  0
+##             
+##              SOPARC (or modified versions, such as SOPLAY or SOPARNA)
+##   Low SES                                                           0
+##   Racialized                                                        0
+##   Women                                                             0
+##             
+##              System for Observing Play and Recreation in Communities (SOPARC)
+##   Low SES                                                                   3
+##   Racialized                                                                1
+##   Women                                                                     1
+```
+
+```r
+table(bg_audit$equity2, bg_audit$measure)
+```
+
+```
+##             
+##              Community Park Audit Tool (CPAT)
+##   Low SES                                   0
+##   Racialized                                1
+##             
+##              Observational Park Audit Tool (OPAT)
+##   Low SES                                       0
+##   Racialized                                    0
+##             
+##              PARK (Parks, Activity, and Recreation among Kids)
+##   Low SES                                                    0
+##   Racialized                                                 0
+##             
+##              Parks and Play Spaces Direct Observation (PPSDO) tool and SOPARC
+##   Low SES                                                                   0
+##   Racialized                                                                0
+##             
+##              Public Open Space Audit Tool (POST)
+##   Low SES                                      0
+##   Racialized                                   0
+##             
+##              Public Open Space Tool. 32 out of the 49 items from POST. We excluded items that were absent \n(e.g., barbecue area, dog fountains) and/or present (e.g., presence \ntrees, access to public transport) in all green spaces, as they did not \ndiscriminate green spaces, and items with an unpredictable impact in \ngreen space use (e.g., arrangement of paths and trees).
+##   Low SES                                                                                                                                                                                                                                                                                                                                                                                0
+##   Racialized                                                                                                                                                                                                                                                                                                                                                                             0
+##             
+##              SOPARC (or modified versions, such as SOPLAY or SOPARNA)
+##   Low SES                                                           0
+##   Racialized                                                        0
+##             
+##              System for Observing Play and Recreation in Communities (SOPARC)
+##   Low SES                                                                   2
+##   Racialized                                                                0
+```
+
+## List and count of study designs for audits
+
+
+
+```r
+table(bg_audit$study_design, bg_audit$measure)
+```
+
+```
+##                     
+##                      Community Park Audit Tool (CPAT)
+##   Case Control                                      0
+##   cross-sectional                                   2
+##   natural experiment                                0
+##                     
+##                      Observational Park Audit Tool (OPAT)
+##   Case Control                                          0
+##   cross-sectional                                       1
+##   natural experiment                                    0
+##                     
+##                      PARK (Parks, Activity, and Recreation among Kids)
+##   Case Control                                                       0
+##   cross-sectional                                                    1
+##   natural experiment                                                 0
+##                     
+##                      Parks and Play Spaces Direct Observation (PPSDO) tool and SOPARC
+##   Case Control                                                                      1
+##   cross-sectional                                                                   0
+##   natural experiment                                                                0
+##                     
+##                      Public Open Space Audit Tool (POST)
+##   Case Control                                         0
+##   cross-sectional                                      1
+##   natural experiment                                   0
+##                     
+##                      Public Open Space Tool. 32 out of the 49 items from POST. We excluded items that were absent \n(e.g., barbecue area, dog fountains) and/or present (e.g., presence \ntrees, access to public transport) in all green spaces, as they did not \ndiscriminate green spaces, and items with an unpredictable impact in \ngreen space use (e.g., arrangement of paths and trees).
+##   Case Control                                                                                                                                                                                                                                                                                                                                                                                   0
+##   cross-sectional                                                                                                                                                                                                                                                                                                                                                                                1
+##   natural experiment                                                                                                                                                                                                                                                                                                                                                                             0
+##                     
+##                      SOPARC (or modified versions, such as SOPLAY or SOPARNA)
+##   Case Control                                                              0
+##   cross-sectional                                                           1
+##   natural experiment                                                        0
+##                     
+##                      System for Observing Play and Recreation in Communities (SOPARC)
+##   Case Control                                                                      0
+##   cross-sectional                                                                   5
+##   natural experiment                                                                1
+```
+
+# Self-Report Tools
+
+## List and count of priority populations for self-report
+
+
+```r
+table(bg_sr$equity_group1, bg_sr$measure)
+```
+
+```
+##                     
+##                      “Is there a public park or play park within 10 min walk of here [your residence]?” Those who reported “Yes” were considered to have access to a local park, while those reporting “No” were not.
+##   Non-Hispanic Black                                                                                                                                                                                                0
+##                     
+##                      “Please tell me if the following places and things are available to your children in your neighborhood, even if [CHILD'S NAME] does not actually use them: 1) A park or playground area; and 2) A recreation center, community center, or boys’ or girls’ club”. Parents self-reported whether a park, playground area, recreation centre, community centre, or boys’/girls’ club was available in the neighbourhood.
+##   Non-Hispanic Black                                                                                                                                                                                                                                                                                                                                                                                                                     1
+##                     
+##                      Are there good parks and playgrounds/play spaces?”
+##   Non-Hispanic Black                                                  0
+##                     
+##                      Question: There are good parks, playgrounds and play spaces in this neighborhood. Response options: strongly agreed, agreed, disagreed, or strongly disagreed.
+##   Non-Hispanic Black                                                                                                                                                              0
+##                     
+##                      Respondents’ assessment of whether there are good parks or playgrounds in the neighborhood and whether respondents feel comfortable going to the park or playground closest to where she lives during the day. Both indicators are coded on a 4-point scale with higher levels indicating higher agreement.
+##   Non-Hispanic Black                                                                                                                                                                                                                                                                                                           0
+```
+
+```r
+table(bg_sr$equity_group2, bg_sr$measure)
+```
+
+```
+##           
+##            “Is there a public park or play park within 10 min walk of here [your residence]?” Those who reported “Yes” were considered to have access to a local park, while those reporting “No” were not.
+##   Hispanic                                                                                                                                                                                                0
+##           
+##            “Please tell me if the following places and things are available to your children in your neighborhood, even if [CHILD'S NAME] does not actually use them: 1) A park or playground area; and 2) A recreation center, community center, or boys’ or girls’ club”. Parents self-reported whether a park, playground area, recreation centre, community centre, or boys’/girls’ club was available in the neighbourhood.
+##   Hispanic                                                                                                                                                                                                                                                                                                                                                                                                                     1
+##           
+##            Are there good parks and playgrounds/play spaces?”
+##   Hispanic                                                  0
+##           
+##            Question: There are good parks, playgrounds and play spaces in this neighborhood. Response options: strongly agreed, agreed, disagreed, or strongly disagreed.
+##   Hispanic                                                                                                                                                              0
+##           
+##            Respondents’ assessment of whether there are good parks or playgrounds in the neighborhood and whether respondents feel comfortable going to the park or playground closest to where she lives during the day. Both indicators are coded on a 4-point scale with higher levels indicating higher agreement.
+##   Hispanic                                                                                                                                                                                                                                                                                                           0
+```
+
+## List and count of study designs for self-report
+
+
+
+```r
+table(bg_sr$study_design, bg_sr$measure)
+```
+
+```
+##                               
+##                                “Is there a public park or play park within 10 min walk of here [your residence]?” Those who reported “Yes” were considered to have access to a local park, while those reporting “No” were not.
+##   cross-sectional                                                                                                                                                                                                             1
+##   longitudinal (5 time points)                                                                                                                                                                                                0
+##                               
+##                                “Please tell me if the following places and things are available to your children in your neighborhood, even if [CHILD'S NAME] does not actually use them: 1) A park or playground area; and 2) A recreation center, community center, or boys’ or girls’ club”. Parents self-reported whether a park, playground area, recreation centre, community centre, or boys’/girls’ club was available in the neighbourhood.
+##   cross-sectional                                                                                                                                                                                                                                                                                                                                                                                                                                  1
+##   longitudinal (5 time points)                                                                                                                                                                                                                                                                                                                                                                                                                     0
+##                               
+##                                Are there good parks and playgrounds/play spaces?”
+##   cross-sectional                                                               1
+##   longitudinal (5 time points)                                                  0
+##                               
+##                                Question: There are good parks, playgrounds and play spaces in this neighborhood. Response options: strongly agreed, agreed, disagreed, or strongly disagreed.
+##   cross-sectional                                                                                                                                                                           0
+##   longitudinal (5 time points)                                                                                                                                                              1
+##                               
+##                                Respondents’ assessment of whether there are good parks or playgrounds in the neighborhood and whether respondents feel comfortable going to the park or playground closest to where she lives during the day. Both indicators are coded on a 4-point scale with higher levels indicating higher agreement.
+##   cross-sectional                                                                                                                                                                                                                                                                                                                        1
+##   longitudinal (5 time points)                                                                                                                                                                                                                                                                                                           0
+```
+
